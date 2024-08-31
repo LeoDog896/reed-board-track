@@ -13,6 +13,8 @@
 	"dependencies": {
 		"@plasmohq/messaging": "^0.6.2",
 		"@plasmohq/storage": "^1.12.0",
+		"chart.js": "^4.4.4",
+		"chartjs-adapter-dayjs-4": "^1.0.4",
 		"dayjs": "^1.11.13",
 		"deep-equal": "^2.2.3",
 		"plasmo": "^0.89.1",
@@ -22,6 +24,7 @@
 	},
 	"devDependencies": {
 		"@ianvs/prettier-plugin-sort-imports": "^4.1.1",
+		"@types/chart.js": "^2.9.41",
 		"@types/chrome": "^0.0.258",
 		"@types/deep-equal": "^1.0.4",
 		"@types/node": "^20.11.5",

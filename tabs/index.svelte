@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { onMount } from "svelte"
     import dayjs from 'dayjs';
+    import { Chart, TimeScale, CategoryScale, LinearScale, LineController, PointElement, LineElement, Filler }  from 'chart.js';
+    import 'chartjs-adapter-dayjs-4/dist/chartjs-adapter-dayjs-4.esm';
 
 	import {
 		getTransactions,
@@ -14,9 +16,52 @@
 		transactions = newTransactions
 	})
 
+    let chart: HTMLCanvasElement;
+    let chartInstance: Chart | undefined
+
 	onMount(async () => {
-		transactions = await getTransactions()
+		transactions = await getTransactions();
+
+        Chart.register(LineController, CategoryScale, LinearScale, TimeScale, PointElement, LineElement, Filler);
+
+        chartInstance = new Chart(chart, {
+            type: 'line',
+            data: {
+                datasets: [{
+                    label: 'Transactions',
+                    data: meaningfulTransactions.map(x => ({
+                        x: x.date.getTime(),
+                        y: x.total
+                    })),
+                    fill: true,
+                    tension: 0.1
+                }],
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    xAxes: {
+                        type: 'time',
+                        time: {
+                            unit: 'day'
+                        }
+                    },
+                    y: {
+                        type: 'linear',
+                        min: 0
+                    }
+                }
+            }
+        });
 	});
+
+    $: if (meaningfulTransactions && chartInstance) {
+        chartInstance.data.datasets[0].data = meaningfulTransactions.map(x => ({
+            x: x.date.getTime(),
+            y: x.total
+        }));
+        chartInstance.update()
+    }
 
     function formatMoney(money: number): string {
         return new Intl.NumberFormat('en-US', {
@@ -51,13 +96,12 @@
             lastDay = dayjs(transaction.date);
         }
 
-        console.log(chunkCount)
-
         return total / chunkCount;
     }
 
     $: meaningfulTransactions = grabTransactionsAfter(sortedTransactions, dayjs().subtract(4, 'months').toDate())
-        .filter(transaction => transaction.amount < 0)
+        .filter(transaction => transaction.amount < 0);
+
 </script>
 
 <h1>Reed Board Point Tracker</h1>
@@ -66,7 +110,6 @@
 
 <ul>
     <li>Transactions: {unmappedTransactions.length}</li>
-    <li>Last Board Plan Payment:</li>
     {#if meaningfulTransactions.length > 0}
         <li>
             Average daily spending in the past 4 months:
@@ -80,6 +123,10 @@
 </ul>
 
 <h2>Transactions</h2>
+
+<div class="canvasContainer">
+    <canvas bind:this={chart}></canvas>
+</div>
 
 <table>
     <thead>
@@ -107,3 +154,9 @@
         {/each}
     </tbody>
 </table>
+
+<style>
+    .canvasContainer {
+        max-width: 500px;
+    }
+</style>

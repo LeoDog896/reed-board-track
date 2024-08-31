@@ -34,7 +34,7 @@
 		>.
 	</p>
 
-	Loaded<span class="highlight">{transactionCount}</span>
+	Loaded&nbsp;<span class="highlight">{transactionCount}</span>
 	transaction{transactionCount == 1 ? "" : "s"}!
 </div>
 

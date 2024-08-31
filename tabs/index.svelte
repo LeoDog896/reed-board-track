@@ -5,6 +5,7 @@
 	import {
 		getTransactions,
 		watchTransactions,
+		type Transaction,
 		type TransactionRecord
 	} from "~transaction"
 
@@ -17,14 +18,46 @@
 		transactions = await getTransactions()
 	});
 
-    function formatMoney(money: string): string {
+    function formatMoney(money: number): string {
         return new Intl.NumberFormat('en-US', {
             style: 'currency',
             currency: 'USD'
         }).format(money)
     }
 
-    $: sortedTransactions = Object.values(transactions).sort((a, b) => a.date.getTime() - b.date.getTime())
+    let unmappedTransactions: Transaction[] = []
+    $: unmappedTransactions = Object.values(transactions);
+
+    let sortedTransactions: Transaction[] = []
+    $: sortedTransactions = unmappedTransactions.sort((b, a) => a.date.getTime() - b.date.getTime())
+
+    function grabTransactionsAfter(transactions: Transaction[], date: Date) {
+        const idx = sortedTransactions.findIndex((item) => item.date.getTime() < date.getTime());
+        return idx === -1 ? sortedTransactions : sortedTransactions.slice(0, idx)
+    }
+
+    function averageDailyTransaction(transactions: Transaction[]) {
+        if (transactions.length === 0) return 0;
+        
+        let total = 0;
+        let chunkCount = 1;
+        let lastDay = dayjs(transactions[0].date);
+        for (const transaction of transactions) {
+            total += transaction.amount;
+            if (!lastDay.isSame(transaction.date, 'day')) {
+                chunkCount++;
+            }
+
+            lastDay = dayjs(transaction.date);
+        }
+
+        console.log(chunkCount)
+
+        return total / chunkCount;
+    }
+
+    $: meaningfulTransactions = grabTransactionsAfter(sortedTransactions, dayjs().subtract(4, 'months').toDate())
+        .filter(transaction => transaction.amount < 0)
 </script>
 
 <h1>Reed Board Point Tracker</h1>
@@ -32,9 +65,18 @@
 <h2>Overview</h2>
 
 <ul>
-    <li>Transactions: {Object.values(transactions).length}</li>
+    <li>Transactions: {unmappedTransactions.length}</li>
     <li>Last Board Plan Payment:</li>
-    <li>Average spending past board plan:</li>
+    {#if meaningfulTransactions.length > 0}
+        <li>
+            Average daily spending in the past 4 months:
+            {formatMoney(averageDailyTransaction(meaningfulTransactions))}
+        </li>
+        <li>
+            Predicted four-month spending:
+            {formatMoney(averageDailyTransaction(meaningfulTransactions) * 4 * 30)}
+        </li>
+    {/if}
 </ul>
 
 <h2>Transactions</h2>

@@ -11,6 +11,7 @@
 	} from "chart.js"
 	import dayjs from "dayjs"
 	import { onMount } from "svelte"
+    import '../style.css'
 
 	import "chartjs-adapter-dayjs-4/dist/chartjs-adapter-dayjs-4.esm"
 
@@ -129,59 +130,84 @@
 	).filter((transaction) => transaction.amount < 0)
 </script>
 
-<h1>Reed Board Point Tracker</h1>
+<header>
+    <h1>Reed Board Point Tracker</h1>
+</header>
 
-<h2>Overview</h2>
+<main>
+    <h2>Overview</h2>
 
-<ul>
-	<li>Transactions: {unmappedTransactions.length}</li>
-	{#if meaningfulTransactions.length > 0}
-		<li>
-			Average daily spending in the past 4 months:
-			{formatMoney(averageDailyTransaction(meaningfulTransactions))}
-		</li>
-		<li>
-			Predicted four-month spending:
-			{formatMoney(averageDailyTransaction(meaningfulTransactions) * 4 * 30)}
-		</li>
-	{/if}
-</ul>
+    <ul>
+        <li>Transactions: {unmappedTransactions.length}</li>
+        {#if meaningfulTransactions.length > 0}
+            <li>
+                Average daily spending in the past 4 months:
+                {formatMoney(averageDailyTransaction(meaningfulTransactions))}
+            </li>
+            <li>
+                Predicted four-month spending:
+                {formatMoney(averageDailyTransaction(meaningfulTransactions) * 4 * 30)}
+            </li>
+        {/if}
+    </ul>
 
-<h2>Transactions</h2>
+    <h2>Transactions</h2>
 
-<div class="canvasContainer">
-	<canvas bind:this={chart}></canvas>
-</div>
+    <div class="canvasContainer">
+        <canvas bind:this={chart}></canvas>
+    </div>
 
-<table>
-	<thead>
-		<tr>
-			<th>Date</th>
-			<th>Time</th>
-			<th>ID</th>
-			<th>Location</th>
-			<th>Plan</th>
-			<th>Amount</th>
-			<th>Total</th>
-		</tr>
-	</thead>
-	<tbody>
-		{#each sortedTransactions as transaction}
-			<tr>
-				<th>{dayjs(transaction.date).format("YYYY/MM/DD")}</th>
-				<th>{dayjs(transaction.date).format("hh:mm:ssA")}</th>
-				<th>{transaction.id}</th>
-				<th>{transaction.location}</th>
-				<th>{transaction.plan}</th>
-				<th>{formatMoney(transaction.amount)}</th>
-				<th>{formatMoney(transaction.total)}</th>
-			</tr>
-		{/each}
-	</tbody>
-</table>
+    <table>
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Time</th>
+                <th>ID</th>
+                <th>Location</th>
+                <th>Plan</th>
+                <th>Amount</th>
+                <th>Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            {#each sortedTransactions as transaction}
+                <tr>
+                    <th>{dayjs(transaction.date).format("YYYY/MM/DD")}</th>
+                    <th>{dayjs(transaction.date).format("hh:mm:ssA")}</th>
+                    <th>{transaction.id}</th>
+                    <th>{transaction.location}</th>
+                    <th>{transaction.plan}</th>
+                    <th>{formatMoney(transaction.amount)}</th>
+                    <th>{formatMoney(transaction.total)}</th>
+                </tr>
+            {/each}
+        </tbody>
+    </table>
+</main>
 
 <style>
 	.canvasContainer {
 		max-width: 500px;
 	}
+
+    header {
+        background-color: var(--primary);
+    }
+    
+    header h1 {
+        margin: 0;
+        padding: 1rem;
+        color: white;
+    }
+
+    main {
+        margin: 1rem;
+    }
+
+    :global(html, body) {
+        padding: 0;
+        margin: 0;
+        width: 100%;
+        height: 100%;
+    }
 </style>

@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { onMount } from "svelte"
+  import './style.css'
 
 	import {
 		getTransactions,
@@ -19,9 +20,11 @@
 	$: transactionCount = Object.values(transactions).length
 </script>
 
-<div class="container">
-	<h2 class="text-center">Reed Board Tracker</h2>
+<header>
+  <h1 class="text-center">Reed Board Tracker</h1>
+</header>
 
+<main>
 	<p>
 		Go to the <a href="https://iris.reed.edu/board_commuter"
 			>board tracking page</a> to update data.
@@ -36,14 +39,34 @@
 
 	Loaded&nbsp;<span class="highlight">{transactionCount}</span>
 	transaction{transactionCount == 1 ? "" : "s"}!
-</div>
+</main>
 
 <style>
-	.container {
+  :global(html, body) {
+    margin: 0;
+    padding: 0;
+  }
+
+  header {
+    background-color: var(--primary);
+  }
+
+  header h1 {
+    color: white;
+    margin: 0;
+    padding: 1rem;
+  }
+
+	main {
 		min-width: 470px;
+    margin: 1rem;
 	}
 
 	.text-center {
 		text-align: center;
 	}
+
+  .highlight {
+    color: var(--primary);
+  }
 </style>

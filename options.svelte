@@ -19,10 +19,11 @@
 	<Modal on:close={() => (removalModal = false)}>
 		<h2>Remove All Data</h2>
 		<p>Are you sure you want to remove all data? You should export it first.</p>
-		<button on:click={() => {
-            clearTransactions();
-            removalModal = false;
-        }}>Yes</button>
+		<button
+			on:click={() => {
+				clearTransactions()
+				removalModal = false
+			}}>Yes</button>
 		<button on:click={() => (removalModal = false)}>No</button>
 	</Modal>
 {/if}

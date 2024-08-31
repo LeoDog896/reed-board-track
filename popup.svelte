@@ -1,42 +1,40 @@
 <script lang="ts">
-  import { onMount } from "svelte"
-  import { clearTransactions, getTransactions, watchTransactions, type TransactionRecord } from "~transaction";
+	import { onMount } from "svelte"
 
-  let transactions: TransactionRecord = {};
-  watchTransactions((newTransactions) => {
-    console.log(newTransactions)
-    transactions = newTransactions
-  })
+	import {
+		getTransactions,
+		watchTransactions,
+		type TransactionRecord
+	} from "~transaction"
 
-  onMount(async () => {
-    transactions = await getTransactions();
-  })
+	let transactions: TransactionRecord = {}
+	watchTransactions((newTransactions) => {
+		console.log(newTransactions)
+		transactions = newTransactions
+	})
 
-  function clear() {
-    clearTransactions();
-  }
+	onMount(async () => {
+		transactions = await getTransactions()
+	})
 </script>
 
 <div class="container">
-  <h2 class="text-center">
-    Reed Board Tracker
-  </h2>
+	<h2 class="text-center">Reed Board Tracker</h2>
 
-  <p>
-    Go to the <a href="https://iris.reed.edu/board_commuter">board tracking page</a> to update data.
-  </p>
+	<p>
+		Go to the <a href="https://iris.reed.edu/board_commuter"
+			>board tracking page</a> to update data.
+	</p>
 
-  <button on:click={clear}>Clear Transactions</button>
-
-  {Object.values(transactions).length}
+	{Object.values(transactions).length}
 </div>
 
 <style>
-  .container {
-      min-width: 470px;
-  }
+	.container {
+		min-width: 470px;
+	}
 
-  .text-center {
-      text-align: center;
-  }
+	.text-center {
+		text-align: center;
+	}
 </style>

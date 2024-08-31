@@ -1,3 +1,3 @@
-import { Storage } from "@plasmohq/storage";
+import { Storage } from "@plasmohq/storage"
 
-export const storage = new Storage();
+export const storage = new Storage()

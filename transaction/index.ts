@@ -13,7 +13,10 @@ export const transactionSchema = z.object({
 })
 
 // where { [id: number]: Transaction }
-export const transactionRecordSchema = z.record(z.coerce.number(), transactionSchema)
+export const transactionRecordSchema = z.record(
+	z.coerce.number(),
+	transactionSchema
+)
 
 export type Transaction = z.infer<typeof transactionSchema>
 export type TransactionRecord = z.infer<typeof transactionRecordSchema>
@@ -21,24 +24,28 @@ export type TransactionRecord = z.infer<typeof transactionRecordSchema>
 export const transactionKey = "point-transactions"
 
 export async function getTransactions(): Promise<TransactionRecord> {
-	const result = transactionRecordSchema.safeParse(await storage.get(transactionKey));
+	const result = transactionRecordSchema.safeParse(
+		await storage.get(transactionKey)
+	)
 
-    if (result.success) {
-        return result.data;
-    } else {
-        console.warn(result.error)
-        return {};
-    }
+	if (result.success) {
+		return result.data
+	} else {
+		console.warn(result.error)
+		return {}
+	}
 }
 
 export async function clearTransactions(): Promise<void> {
-    await storage.set(transactionKey, {});
+	await storage.set(transactionKey, {})
 }
 
-export async function watchTransactions(callback: (transactions: TransactionRecord) => void) {
-    storage.watch({
-        [transactionKey]: (transactions) => callback(transactions.newValue)
-    })
+export async function watchTransactions(
+	callback: (transactions: TransactionRecord) => void
+) {
+	storage.watch({
+		[transactionKey]: (transactions) => callback(transactions.newValue)
+	})
 }
 
 interface TransactionUpdate {
@@ -50,7 +57,7 @@ interface TransactionUpdate {
 export async function storeTransactions(
 	transactions: Transaction[]
 ): Promise<TransactionUpdate[]> {
-	const currentTransactions = await getTransactions();
+	const currentTransactions = await getTransactions()
 
 	const updatedTransactions: TransactionUpdate[] = []
 
@@ -70,7 +77,7 @@ export async function storeTransactions(
 		currentTransactions[transaction.id] = transaction
 	}
 
-	await storage.set(transactionKey, currentTransactions);
+	await storage.set(transactionKey, currentTransactions)
 
 	return updatedTransactions
 }

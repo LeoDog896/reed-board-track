@@ -3,7 +3,7 @@ import type { PlasmoCSConfig } from "plasmo"
 import { storeTransactions, type Transaction } from "~transaction"
 
 export const config: PlasmoCSConfig = {
-	matches: ["https://iris.reed.edu/board_commuter/*"],
+	matches: ["https://iris.reed.edu/board_commuter/*"]
 }
 
 const rows = [...document.querySelector("table#transactions tbody").children]
@@ -15,32 +15,34 @@ function parseMoney(money: string): number {
 }
 
 function parseDate(date: string): Date {
-	const dateWithoutDay = date.substring(4);
-	const nextSpaceIdx = dateWithoutDay.indexOf(" ");
-	const dateWithoutTime = dateWithoutDay.substring(0, nextSpaceIdx);
-	const creatingDate = new Date(dateWithoutTime);
+	const dateWithoutDay = date.substring(4)
+	const nextSpaceIdx = dateWithoutDay.indexOf(" ")
+	const dateWithoutTime = dateWithoutDay.substring(0, nextSpaceIdx)
+	const creatingDate = new Date(dateWithoutTime)
 
-	const time = dateWithoutDay.substring(nextSpaceIdx + 1);
-	const timeWithoutMeridem = time.slice(0, -2);
+	const time = dateWithoutDay.substring(nextSpaceIdx + 1)
+	const timeWithoutMeridem = time.slice(0, -2)
 
-	const [hour, minute, second] = timeWithoutMeridem.split(":").map(part => parseInt(part))
+	const [hour, minute, second] = timeWithoutMeridem
+		.split(":")
+		.map((part) => parseInt(part))
 
 	if (time.slice(-2) == "PM") {
-		creatingDate.setHours(hour + 12, minute, second);
+		creatingDate.setHours(hour + 12, minute, second)
 	} else {
-		creatingDate.setHours(hour, minute, second);
+		creatingDate.setHours(hour, minute, second)
 	}
-	
-	return creatingDate;
+
+	return creatingDate
 }
 
 function preprocessItem(item: HTMLTableRowElement): Transaction {
-	const children = [...item.children].map(child => (child as HTMLElement).innerText);
+	const children = [...item.children].map(
+		(child) => (child as HTMLElement).innerText
+	)
 
 	return {
-		date: parseDate(
-			children[0]
-		),
+		date: parseDate(children[0]),
 		id: parseInt(children[1]),
 		location: children[2],
 		plan: children[3],
@@ -55,4 +57,4 @@ for (const row of rows) {
 	foundData.push(preprocessItem(row as HTMLTableRowElement))
 }
 
-storeTransactions(foundData);
+storeTransactions(foundData)

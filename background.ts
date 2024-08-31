@@ -9,7 +9,7 @@ const rules: chrome.declarativeNetRequest.Rule[] = [
 		},
 		condition: {
 			urlFilter: "https://iris.reed.edu/board_commuter/assets/*.js",
-			resourceTypes: Object.values(chrome.declarativeNetRequest.ResourceType)
+			resourceTypes: [chrome.declarativeNetRequest.ResourceType.SCRIPT]
 		}
 	}
 ]

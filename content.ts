@@ -9,7 +9,6 @@ export const config: PlasmoCSConfig = {
 const rows = [...document.querySelector("table#transactions tbody").children]
 
 function parseMoney(money: string): number {
-	console.log(money)
 	return Number(
 		[...money].filter((char) => ![",", "$", " ", "+"].includes(char)).join("")
 	)
@@ -28,8 +27,12 @@ function parseDate(date: string): Date {
 		.split(":")
 		.map((part) => parseInt(part))
 
-	if (time.slice(-2) == "PM") {
+	const meridian = time.slice(-2);
+
+	if (meridian == "PM" && hour != 12) {
 		creatingDate.setHours(hour + 12, minute, second)
+	} else if (meridian == "AM" && hour == 12) {
+		creatingDate.setHours(0, minute, second)
 	} else {
 		creatingDate.setHours(hour, minute, second)
 	}

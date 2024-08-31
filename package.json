@@ -24,6 +24,7 @@
 	},
 	"devDependencies": {
 		"@ianvs/prettier-plugin-sort-imports": "^4.1.1",
+		"@parcel/transformer-sass": "^2.12.0",
 		"@types/chart.js": "^2.9.41",
 		"@types/chrome": "^0.0.258",
 		"@types/deep-equal": "^1.0.4",
@@ -34,7 +35,7 @@
 	},
 	"manifest": {
 		"host_permissions": [
-			"https://iris.reed.edu/*"
+			"https://iris.reed.edu/board_commuter/*"
 		],
 		"permissions": [
 			"declarativeNetRequest"

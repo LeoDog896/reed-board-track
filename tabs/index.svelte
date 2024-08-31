@@ -32,8 +32,8 @@
     $: sortedTransactions = unmappedTransactions.sort((b, a) => a.date.getTime() - b.date.getTime())
 
     function grabTransactionsAfter(transactions: Transaction[], date: Date) {
-        const idx = sortedTransactions.findIndex((item) => item.date.getTime() < date.getTime());
-        return idx === -1 ? sortedTransactions : sortedTransactions.slice(0, idx)
+        const idx = transactions.findIndex((item) => item.date.getTime() < date.getTime());
+        return idx === -1 ? transactions : transactions.slice(0, idx)
     }
 
     function averageDailyTransaction(transactions: Transaction[]) {

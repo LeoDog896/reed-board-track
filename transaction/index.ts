@@ -1,53 +1,70 @@
-import type { Storage } from "@plasmohq/storage";
-import { z } from 'zod';
-import equal from 'deep-equal';
+import equal from "deep-equal"
+import { z } from "zod"
+
+import { storage } from "~storage"
 
 export const transactionSchema = z.object({
-    date: z.coerce.date(),
-    id: z.number(),
-    location: z.string(),
-    plan: z.string(),
-    amount: z.number()
-});
+	date: z.coerce.date(),
+	id: z.number(),
+	location: z.string(),
+	plan: z.string(),
+	amount: z.number(),
+	total: z.number()
+})
 
 // where { [id: number]: Transaction }
-export const transactionRecordSchema = z.record(z.number(), transactionSchema);
+export const transactionRecordSchema = z.record(z.coerce.number(), transactionSchema)
 
-export type Transaction = z.infer<typeof transactionSchema>;
+export type Transaction = z.infer<typeof transactionSchema>
 export type TransactionRecord = z.infer<typeof transactionRecordSchema>
 
-export const transactionKey = "point-transactions";
+export const transactionKey = "point-transactions"
 
-export function getTransactions(storage: Storage): TransactionRecord {
-    return transactionRecordSchema.parse(storage.get(transactionKey));
+export async function getTransactions(): Promise<TransactionRecord> {
+	const result = transactionRecordSchema.safeParse(await storage.get(transactionKey));
+
+    if (result.success) {
+        return result.data;
+    } else {
+        console.warn(result.error)
+        return {};
+    }
+}
+
+export async function clearTransactions(): Promise<void> {
+    await storage.remove(transactionKey);
 }
 
 interface TransactionUpdate {
-    old?: Transaction,
-    new: Transaction,
-    updated: boolean
+	old?: Transaction
+	new: Transaction
+	updated: boolean
 }
 
-export function storeTransactions(storage: Storage, transactions: Transaction[]) {
-    const currentTransactions = getTransactions(storage);
+export async function storeTransactions(
+	transactions: Transaction[]
+): Promise<TransactionUpdate[]> {
+	const currentTransactions = await getTransactions();
 
-    const updatedTransactions: Map<number, TransactionUpdate> = new Map();
+	const updatedTransactions: TransactionUpdate[] = []
 
-    for (const transaction of transactions) {
-        if (currentTransactions[transaction.id]) {
-            const oldTransaction = currentTransactions[transaction.id];
+	for (const transaction of transactions) {
+		if (currentTransactions[transaction.id]) {
+			const oldTransaction = currentTransactions[transaction.id]
 
-            updatedTransactions.set(transaction.id, {
-                old: oldTransaction,
-                new: transaction,
-                updated: !equal(oldTransaction, transaction)
-            });
-            
-            continue;
-        }
+			updatedTransactions.push({
+				old: oldTransaction,
+				new: transaction,
+				updated: !equal(oldTransaction, transaction)
+			})
 
-        currentTransactions[transaction.id] = transaction;
-    }
+			continue
+		}
 
-    storage.set(transactionKey, currentTransactions);
+		currentTransactions[transaction.id] = transaction
+	}
+
+	await storage.set(transactionKey, currentTransactions);
+
+	return updatedTransactions
 }

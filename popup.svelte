@@ -1,13 +1,10 @@
 <script lang="ts">
-  export let count = 0;
-  let action: string = null;
-  function increment() {
-      count += 1;
-      action = "increment";
-  }
-  function decrement() {
-      count -= 1;
-      action = "decrement";
+  import { clearTransactions, getTransactions } from "~transaction";
+
+  const transactions = getTransactions();
+
+  function clear() {
+    clearTransactions();
   }
 </script>
 
@@ -19,6 +16,14 @@
   <p>
     Go to the <a href="https://iris.reed.edu/board_commuter">board tracking page</a> to update data.
   </p>
+
+  <button on:click={clear}>Clear Transactions</button>
+
+  {#await transactions}
+    <p>Loading...</p>
+  {:then loaded}
+    {Object.values(loaded).length}
+  {/await}
 </div>
 
 <style>

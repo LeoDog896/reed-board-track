@@ -26,6 +26,9 @@ importers:
       deep-equal:
         specifier: ^2.2.3
         version: 2.2.3
+      downloadjs:
+        specifier: ^1.4.7
+        version: 1.4.7
       plasmo:
         specifier: ^0.89.1
         version: 0.89.1(@swc/core@1.7.22(@swc/helpers@0.5.12))(@swc/helpers@0.5.12)(lodash@4.17.21)(postcss@8.4.41)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
@@ -54,6 +57,9 @@ importers:
       '@types/deep-equal':
         specifier: ^1.0.4
         version: 1.0.4
+      '@types/downloadjs':
+        specifier: ^1.4.6
+        version: 1.4.6
       '@types/node':
         specifier: ^20.11.5
         version: 20.11.5
@@ -1406,6 +1412,9 @@ packages:
   '@types/deep-equal@1.0.4':
     resolution: {integrity: sha512-tqdiS4otQP4KmY0PR3u6KbZ5EWvhNdUoS/jc93UuK23C220lOZ/9TvjfxdPcKvqwwDVtmtSCrnr0p/2dirAxkA==}
 
+  '@types/downloadjs@1.4.6':
+    resolution: {integrity: sha512-mp3w70vsaiLRT9ix92fmI9Ob2yJAPZm6tShJtofo2uHbN11G2i6a0ApIEjBl/kv3e9V7Pv7jMjk1bUwYWvMHvA==}
+
   '@types/estree@1.0.5':
     resolution: {integrity: sha512-/kYRxGDLWzHOB7q+wtSUQlFrtcdUccpfy+X+9iMBpHK8QLLhx2wIPYuS5DYtR9Wa/YlZAbIovy7qVdB1Aq6Lyw==}
 
@@ -1860,6 +1869,9 @@ packages:
   dotenv@7.0.0:
     resolution: {integrity: sha512-M3NhsLbV1i6HuGzBUH8vXrtxOk+tWmzWKDMbAVSUp3Zsjm7ywFeuwrUXhmhQyRK1q5B5GGy7hcXPbj3bnfZg2g==}
     engines: {node: '>=6'}
+
+  downloadjs@1.4.7:
+    resolution: {integrity: sha512-LN1gO7+u9xjU5oEScGFKvXhYf7Y/empUIIEAGBs1LzUq/rg5duiDrkuH5A2lQGd5jfMOb9X9usDa2oVXwJ0U/Q==}
 
   eastasianwidth@0.2.0:
     resolution: {integrity: sha512-I88TYZWc9XiYHRQ4/3c5rjjfgkjhLyW2luGIheGERbNQ6OY7yTybanSpDXZa8y7VUP9YmDcYa+eyq4ca7iLqWA==}
@@ -3855,7 +3867,7 @@ snapshots:
       '@parcel/types': 2.12.0(@parcel/core@2.9.3)(@swc/helpers@0.5.12)
       '@parcel/utils': 2.12.0
       '@parcel/watcher': 2.2.0
-      '@parcel/workers': 2.12.0(@parcel/core@2.9.3)(@swc/helpers@0.5.12)
+      '@parcel/workers': 2.12.0(@parcel/core@2.9.3)
     transitivePeerDependencies:
       - '@swc/helpers'
 
@@ -4025,7 +4037,7 @@ snapshots:
       '@parcel/node-resolver-core': 3.3.0(@parcel/core@2.9.3)
       '@parcel/types': 2.12.0(@parcel/core@2.9.3)(@swc/helpers@0.5.12)
       '@parcel/utils': 2.12.0
-      '@parcel/workers': 2.12.0(@parcel/core@2.9.3)(@swc/helpers@0.5.12)
+      '@parcel/workers': 2.12.0(@parcel/core@2.9.3)
       '@swc/core': 1.7.22(@swc/helpers@0.5.12)
       semver: 7.6.3
     transitivePeerDependencies:
@@ -4381,7 +4393,7 @@ snapshots:
       '@parcel/fs': 2.12.0(@parcel/core@2.9.3)(@swc/helpers@0.5.12)
       '@parcel/package-manager': 2.12.0(@parcel/core@2.9.3)(@swc/helpers@0.5.12)
       '@parcel/source-map': 2.1.1
-      '@parcel/workers': 2.12.0(@parcel/core@2.9.3)(@swc/helpers@0.5.12)
+      '@parcel/workers': 2.12.0(@parcel/core@2.9.3)
       utility-types: 3.11.0
     transitivePeerDependencies:
       - '@parcel/core'
@@ -4491,7 +4503,7 @@ snapshots:
       '@parcel/watcher-win32-arm64': 2.2.0
       '@parcel/watcher-win32-x64': 2.2.0
 
-  '@parcel/workers@2.12.0(@parcel/core@2.9.3)(@swc/helpers@0.5.12)':
+  '@parcel/workers@2.12.0(@parcel/core@2.9.3)':
     dependencies:
       '@parcel/core': 2.9.3
       '@parcel/diagnostic': 2.12.0
@@ -4500,8 +4512,6 @@ snapshots:
       '@parcel/types': 2.12.0(@parcel/core@2.9.3)(@swc/helpers@0.5.12)
       '@parcel/utils': 2.12.0
       nullthrows: 1.1.1
-    transitivePeerDependencies:
-      - '@swc/helpers'
 
   '@parcel/workers@2.8.3(@parcel/core@2.9.3)':
     dependencies:
@@ -5053,6 +5063,8 @@ snapshots:
 
   '@types/deep-equal@1.0.4': {}
 
+  '@types/downloadjs@1.4.6': {}
+
   '@types/estree@1.0.5': {}
 
   '@types/filesystem@0.0.36':
@@ -5538,6 +5550,8 @@ snapshots:
   dotenv@16.3.1: {}
 
   dotenv@7.0.0: {}
+
+  downloadjs@1.4.7: {}
 
   eastasianwidth@0.2.0: {}
 

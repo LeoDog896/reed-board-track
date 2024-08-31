@@ -2,6 +2,8 @@
 	import dayjs, { type OpUnitType } from "dayjs"
 	import { onMount } from "svelte"
     import '../style.css'
+	import ReedLogo from '../assets/reed-college-griffin-white.png';
+	import download from 'downloadjs'
 
 	import {
 		getTransactions,
@@ -104,16 +106,41 @@
 	let dayCount = 120;
 	
 	let displayType = "total-chart";
+
+	function escapeCSV(part: string): string {
+		if (part.includes(",") || part.includes('"')) {
+			return `"${part.replace('"', '""')}"`
+		}
+
+		return part
+	}
+
+	function exportTransactionsNDJSON(transactions: Transaction[]) {
+		download(
+			transactions.map(transaction => JSON.stringify(transaction)).join("\n"),
+			"data.ndjson",
+			"application/x-ndjson"
+		)
+	}
+
+	function exportTransactionsCSV(transactions: Transaction[]) {
+		download(
+			transactions.map(transaction => `${transaction.id},${transaction.date.getTime()},${transaction.amount},${transaction.total},${escapeCSV(transaction.location)},${escapeCSV(transaction.plan)}`).join("\n"),
+			"data.csv",
+			"appli"
+		)
+	}
 </script>
 
 <header>
+	<img height="40px" src={ReedLogo} alt="Reed College Logo" />
     <h1>Reed Board Point Tracker</h1>
 </header>
 
 <main>
     <p>
         Track your Reed Board Points
-        (<a href="https://iris.reed.edu/board_commuter">IRIS link</a>)
+        (update by going to <a href="https://iris.reed.edu/board_commuter">Board Communter (IRIS)</a>)
         and see if you can or need to change your board plan
         (<a href="https://www.reed.edu/campus-life/housing-dining/dining-food-services/meal-plan.html">Meal Plan Cost</a>).
     </p>
@@ -130,14 +157,19 @@
             <li>
                 Predicted <input type="number" placeholder="days" bind:value={dayCount} /> day spending:
                 {formatMoney(averageTimeTransaction(meaningfulTransactionsMinusToday) * dayCount)}
-				(<a href="https://www.reed.edu/academic-calendar/">See Academic Calendar</a>)
+				(<a href="https://www.reed.edu/academic-calendar/">See Academic Calendar</a>) (<a href="https://www.reed.edu/campus-life/housing-dining/dining-food-services/meal-plan.html">See Meal Plan Cost</a>)
             </li>
         {/if}
     </ul>
 
     <h2>Transactions</h2>
 
+	<button on:click={() => exportTransactionsNDJSON(unmappedTransactions)}>Export Transactions as <a href="https://github.com/ndjson/ndjson-spec">ND-json</a></button>
+	<button on:click={() => exportTransactionsCSV(unmappedTransactions)}>Export Transactions as CSV</button>
+
 	<!-- TODO: before/after filtering -->
+
+	<p>Select Data Display Type</p>
 
 	<select bind:value={displayType}>
 		<option value="total-chart">Total Chart</option>
@@ -203,10 +235,16 @@
 
     header {
         background-color: var(--primary);
+		display: flex;
+		align-items: center;
+		padding: 1rem;
+
+		img {
+			margin-right: 1rem;
+		}
 
 		h1 {
 			margin: 0;
-			padding: 1rem;
 			color: white;
 		}
     }
@@ -243,5 +281,9 @@
 
 			padding: 0 0.5rem;
 		}
+	}
+
+	select {
+		margin-bottom: 0.5rem;
 	}
 </style>

@@ -1,19 +1,7 @@
 <script lang="ts">
-	import {
-		CategoryScale,
-		Chart,
-		Filler,
-		LinearScale,
-		LineController,
-		LineElement,
-		PointElement,
-		TimeScale
-	} from "chart.js"
-	import dayjs from "dayjs"
+	import dayjs, { type OpUnitType } from "dayjs"
 	import { onMount } from "svelte"
     import '../style.css'
-
-	import "chartjs-adapter-dayjs-4/dist/chartjs-adapter-dayjs-4.esm"
 
 	import {
 		getTransactions,
@@ -21,68 +9,16 @@
 		type Transaction,
 		type TransactionRecord
 	} from "~transaction"
+	import TimeChart from "~components/TimeChart.svelte"
 
 	let transactions: TransactionRecord = {}
 	watchTransactions((newTransactions) => {
 		transactions = newTransactions
 	})
 
-	let chart: HTMLCanvasElement
-	let chartInstance: Chart | undefined
-
 	onMount(async () => {
 		transactions = await getTransactions()
-
-		Chart.register(
-			LineController,
-			CategoryScale,
-			LinearScale,
-			TimeScale,
-			PointElement,
-			LineElement,
-			Filler
-		)
-
-		chartInstance = new Chart(chart, {
-			type: "line",
-			data: {
-				datasets: [
-					{
-						label: "Transactions",
-						data: meaningfulTransactions.map((x) => ({
-							x: x.date.getTime(),
-							y: x.total
-						})),
-						fill: true,
-						tension: 0.1
-					}
-				]
-			},
-			options: {
-				responsive: true,
-				scales: {
-					xAxes: {
-						type: "time",
-						time: {
-							unit: "day"
-						}
-					},
-					y: {
-						type: "linear",
-						min: 0
-					}
-				}
-			}
-		})
 	})
-
-	$: if (meaningfulTransactions && chartInstance) {
-		chartInstance.data.datasets[0].data = meaningfulTransactions.map((x) => ({
-			x: x.date.getTime(),
-			y: x.total
-		}))
-		chartInstance.update()
-	}
 
 	function formatMoney(money: number): string {
 		return new Intl.NumberFormat("en-US", {
@@ -113,7 +49,7 @@
 		return idx === -1 ? transactions : transactions.slice(idx)
 	}
 
-	function averageDailyTransaction(transactions: Transaction[]) {
+	function averageTimeTransaction(transactions: Transaction[], unit: OpUnitType = "day") {
 		if (transactions.length === 0) return 0
 
 		let total = 0
@@ -121,7 +57,7 @@
 		let lastDay = dayjs(transactions[0].date)
 		for (const transaction of transactions) {
 			total += transaction.amount
-			if (!lastDay.isSame(transaction.date, "day")) {
+			if (!lastDay.isSame(transaction.date, unit)) {
 				chunkCount++
 			}
 
@@ -129,6 +65,30 @@
 		}
 
 		return total / chunkCount
+	}
+
+	function chunkedTransactions(transactions: Transaction[], unit: OpUnitType = "day"): Transaction[][] {
+		if (transactions.length === 0) return []
+
+		const chunks: Transaction[][] = [];
+		let currentChunk: Transaction[] = [];
+		let lastDay = dayjs(transactions[0].date);
+
+		for (const transaction of transactions) {
+			if (!lastDay.isSame(transaction.date, unit)) {
+				chunks.push(currentChunk)
+				currentChunk = []
+			}
+
+			currentChunk.push(transaction);
+			lastDay = dayjs(transaction.date)
+		}
+
+		if (currentChunk.length !== 0) {
+			chunks.push(currentChunk)
+		}
+
+		return chunks;
 	}
 
 	$: meaningfulTransactions = grabTransactionsAfter(
@@ -142,6 +102,8 @@
 	)
 
 	let dayCount = 120;
+	
+	let displayType = "total-chart";
 </script>
 
 <header>
@@ -163,11 +125,11 @@
         {#if meaningfulTransactions.length > 0}
             <li>
                 Average daily spending in the past 4 months:
-                {formatMoney(averageDailyTransaction(meaningfulTransactionsMinusToday))}
+                {formatMoney(averageTimeTransaction(meaningfulTransactionsMinusToday))}
             </li>
             <li>
                 Predicted <input type="number" placeholder="days" bind:value={dayCount} /> day spending:
-                {formatMoney(averageDailyTransaction(meaningfulTransactionsMinusToday) * dayCount)}
+                {formatMoney(averageTimeTransaction(meaningfulTransactionsMinusToday) * dayCount)}
 				(<a href="https://www.reed.edu/academic-calendar/">See Academic Calendar</a>)
             </li>
         {/if}
@@ -175,36 +137,63 @@
 
     <h2>Transactions</h2>
 
-    <div class="canvasContainer">
-        <canvas bind:this={chart}></canvas>
-    </div>
+	<!-- TODO: before/after filtering -->
 
-    <table>
-        <thead>
-            <tr>
-                <th>Date</th>
-                <th>Time</th>
-                <th>ID</th>
-                <th>Location</th>
-                <th>Plan</th>
-                <th>Amount</th>
-                <th>Total</th>
-            </tr>
-        </thead>
-        <tbody>
-            {#each sortedTransactions as transaction}
-                <tr>
-                    <th>{dayjs(transaction.date).format("YYYY/MM/DD")}</th>
-                    <th>{dayjs(transaction.date).format("hh:mm:ssA")}</th>
-                    <th>{transaction.id}</th>
-                    <th>{transaction.location}</th>
-                    <th>{transaction.plan}</th>
-                    <th>{formatMoney(transaction.amount)}</th>
-                    <th>{formatMoney(transaction.total)}</th>
-                </tr>
-            {/each}
-        </tbody>
-    </table>
+	<select bind:value={displayType}>
+		<option value="total-chart">Total Chart</option>
+		<option value="daily-chart">Daily Chart</option>
+		<option value="average-eating-time">Average Eating Times</option>
+		<option value="raw-transaction-table">Transactions Table</option>
+	</select>
+
+	{#if displayType == "total-chart"}
+		<div class="canvasContainer">
+			<TimeChart data={meaningfulTransactions.map(transaction => ({ x: transaction.date.getTime(), y: transaction.total }))}/>
+		</div>
+	{:else if displayType == "daily-chart"}
+		<div class="canvasContainer">
+			<TimeChart data={
+				chunkedTransactions(meaningfulTransactions)
+					.map(transactions => {
+						const day = transactions[0].date.setHours(0, 0, 0);
+
+						return {
+							x: day,
+							y: -transactions.map(transaction => transaction.amount).reduce((a, b) => a + b, 0)
+						}
+					})
+				}/>
+		</div>
+	{:else if displayType == "raw-transaction-table"}
+		<table>
+			<thead>
+				<tr>
+					<th>Date</th>
+					<th>Time</th>
+					<th>ID</th>
+					<th>Location</th>
+					<th>Plan</th>
+					<th>Amount</th>
+					<th>Total</th>
+				</tr>
+			</thead>
+			<tbody>
+				{#each sortedTransactions as transaction}
+					<tr>
+						<th>{dayjs(transaction.date).format("YYYY/MM/DD")}</th>
+						<th>{dayjs(transaction.date).format("hh:mm:ssA")}</th>
+						<th>{transaction.id}</th>
+						<th>{transaction.location}</th>
+						<th>{transaction.plan}</th>
+						<th>{formatMoney(transaction.amount)}</th>
+						<th>{formatMoney(transaction.total)}</th>
+					</tr>
+				{/each}
+			</tbody>
+		</table>
+	{:else}
+		<p>Unsupported view mode: {displayType}</p>
+	{/if}
 </main>
 
 <style lang="scss">

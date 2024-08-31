@@ -9,8 +9,9 @@ export const config: PlasmoCSConfig = {
 const rows = [...document.querySelector("table#transactions tbody").children]
 
 function parseMoney(money: string): number {
+	console.log(money)
 	return Number(
-		[...money].filter((char) => ![",", "$", " "].includes(char)).join("")
+		[...money].filter((char) => ![",", "$", " ", "+"].includes(char)).join("")
 	)
 }
 
@@ -46,7 +47,7 @@ function preprocessItem(item: HTMLTableRowElement): Transaction {
 		id: parseInt(children[1]),
 		location: children[2],
 		plan: children[3],
-		amount: parseMoney(children[4].substring("-".length).trim()),
+		amount: parseMoney(children[4]),
 		total: parseMoney(children[5])
 	}
 }

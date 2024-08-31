@@ -9,13 +9,14 @@
 
 	let transactions: TransactionRecord = {}
 	watchTransactions((newTransactions) => {
-		console.log(newTransactions)
 		transactions = newTransactions
 	})
 
 	onMount(async () => {
 		transactions = await getTransactions()
 	})
+
+	$: transactionCount = Object.values(transactions).length
 </script>
 
 <div class="container">
@@ -26,7 +27,15 @@
 			>board tracking page</a> to update data.
 	</p>
 
-	{Object.values(transactions).length}
+	<p>
+		To get a better view of the entire panel, view the <a
+			href="/tabs/index.html"
+			target="_blank">Reed Board Track Homepage</a
+		>.
+	</p>
+
+	Loaded <span class="highlight">{transactionCount}</span>
+	transaction{transactionCount == 1 ? "" : "s"}!
 </div>
 
 <style>

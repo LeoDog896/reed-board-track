@@ -35,6 +35,16 @@
 		],
 		"permissions": [
 			"declarativeNetRequest"
+		],
+		"web_accessible_resources": [
+			{
+				"matches": [
+					"<all_urls>"
+				],
+				"resources": [
+					"tabs/index.html"
+				]
+			}
 		]
 	}
 }

@@ -32,7 +32,13 @@ export async function getTransactions(): Promise<TransactionRecord> {
 }
 
 export async function clearTransactions(): Promise<void> {
-    await storage.remove(transactionKey);
+    await storage.set(transactionKey, {});
+}
+
+export async function watchTransactions(callback: (transactions: TransactionRecord) => void) {
+    storage.watch({
+        [transactionKey]: (transactions) => callback(transactions.newValue)
+    })
 }
 
 interface TransactionUpdate {

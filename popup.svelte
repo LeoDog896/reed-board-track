@@ -1,7 +1,16 @@
 <script lang="ts">
-  import { clearTransactions, getTransactions } from "~transaction";
+  import { onMount } from "svelte"
+  import { clearTransactions, getTransactions, watchTransactions, type TransactionRecord } from "~transaction";
 
-  const transactions = getTransactions();
+  let transactions: TransactionRecord = {};
+  watchTransactions((newTransactions) => {
+    console.log(newTransactions)
+    transactions = newTransactions
+  })
+
+  onMount(async () => {
+    transactions = await getTransactions();
+  })
 
   function clear() {
     clearTransactions();
@@ -19,11 +28,7 @@
 
   <button on:click={clear}>Clear Transactions</button>
 
-  {#await transactions}
-    <p>Loading...</p>
-  {:then loaded}
-    {Object.values(loaded).length}
-  {/await}
+  {Object.values(transactions).length}
 </div>
 
 <style>

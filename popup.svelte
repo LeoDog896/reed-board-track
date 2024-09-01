@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { onMount } from "svelte"
-  import './style.css'
+
+	import "./style.css"
 
 	import {
 		getTransactions,
@@ -21,12 +22,12 @@
 </script>
 
 <header>
-  <h1 class="text-center">Reed Board Tracker</h1>
+	<h1 class="text-center">Reed Board Tracker</h1>
 </header>
 
 <main>
 	<p>
-		Go to the <a href="https://iris.reed.edu/board_commuter"
+		Go to the <a href="https://iris.reed.edu/board_commuter" target="_blank"
 			>board tracking page</a> to update data.
 	</p>
 
@@ -42,31 +43,31 @@
 </main>
 
 <style>
-  :global(html, body) {
-    margin: 0;
-    padding: 0;
-  }
+	:global(html, body) {
+		margin: 0;
+		padding: 0;
+	}
 
-  header {
-    background-color: var(--primary);
-  }
+	header {
+		background-color: var(--primary);
+	}
 
-  header h1 {
-    color: white;
-    margin: 0;
-    padding: 1rem;
-  }
+	header h1 {
+		color: white;
+		margin: 0;
+		padding: 1rem;
+	}
 
 	main {
 		min-width: 470px;
-    margin: 1rem;
+		margin: 1rem;
 	}
 
 	.text-center {
 		text-align: center;
 	}
 
-  .highlight {
-    color: var(--primary);
-  }
+	.highlight {
+		color: var(--primary);
+	}
 </style>

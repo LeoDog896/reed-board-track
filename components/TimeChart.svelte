@@ -1,5 +1,5 @@
 <script lang="ts">
-    import {
+	import {
 		CategoryScale,
 		Chart,
 		Filler,
@@ -10,16 +10,17 @@
 		TimeScale
 	} from "chart.js"
 
-    import "chartjs-adapter-dayjs-4/dist/chartjs-adapter-dayjs-4.esm"
+	import "chartjs-adapter-dayjs-4/dist/chartjs-adapter-dayjs-4.esm"
+
 	import { onMount } from "svelte"
 
-    let chart: HTMLCanvasElement
+	let chart: HTMLCanvasElement
 	let chartInstance: Chart | undefined
 
-    export let data: { x: number, y: number }[]
+	export let data: { x: number; y: number }[]
 
-    onMount(() => {
-        Chart.register(
+	onMount(() => {
+		Chart.register(
 			LineController,
 			CategoryScale,
 			LinearScale,
@@ -37,7 +38,7 @@
 						label: "Transactions",
 						data,
 						tension: 0.3,
-                        borderColor: "#A70E16",
+						borderColor: "#A70E16"
 					}
 				]
 			},
@@ -58,12 +59,12 @@
 			}
 		})
 
-        return () => {
-            chartInstance.destroy()
-        }
-    })
+		return () => {
+			chartInstance.destroy()
+		}
+	})
 
-    $: if (data && chartInstance) {
+	$: if (data && chartInstance) {
 		chartInstance.data.datasets[0].data = data
 		chartInstance.update()
 	}

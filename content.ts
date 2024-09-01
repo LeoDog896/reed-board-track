@@ -27,7 +27,7 @@ function parseDate(date: string): Date {
 		.split(":")
 		.map((part) => parseInt(part))
 
-	const meridian = time.slice(-2);
+	const meridian = time.slice(-2)
 
 	if (meridian == "PM" && hour != 12) {
 		creatingDate.setHours(hour + 12, minute, second)

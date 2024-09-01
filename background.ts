@@ -5,11 +5,11 @@ const rules: chrome.declarativeNetRequest.Rule[] = [
 		id: 1,
 		priority: 1,
 		action: {
-			type: chrome.declarativeNetRequest.RuleActionType.BLOCK
+			type: "block" as chrome.declarativeNetRequest.RuleActionType
 		},
 		condition: {
 			urlFilter: "https://iris.reed.edu/board_commuter/assets/*.js",
-			resourceTypes: [chrome.declarativeNetRequest.ResourceType.SCRIPT]
+			resourceTypes: ["script" as chrome.declarativeNetRequest.ResourceType]
 		}
 	}
 ]

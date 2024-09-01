@@ -2,6 +2,7 @@
 	import dayjs, { type OpUnitType } from "dayjs"
 	import { onMount } from "svelte"
 
+	import '@fontsource-variable/dm-sans'
 	import "../style.css"
 
 	import ChromeSVG from "bundle-text:../assets/chrome.svg"

@@ -2,6 +2,8 @@ import type { PlasmoCSConfig } from "plasmo"
 
 import { storeTransactions, type Transaction } from "~transaction"
 
+console.info("[Reed Board Tracker] Injected!")
+
 export const config: PlasmoCSConfig = {
 	matches: ["https://iris.reed.edu/board_commuter/*"]
 }
@@ -41,17 +43,17 @@ function parseDate(date: string): Date {
 }
 
 function preprocessItem(item: HTMLTableRowElement): Transaction {
-	const children = [...item.children].map(
+	const [date, id, location, plan, amount, total] = [...item.children].map(
 		(child) => (child as HTMLElement).innerText
 	)
 
 	return {
-		date: parseDate(children[0]),
-		id: parseInt(children[1]),
-		location: children[2],
-		plan: children[3],
-		amount: parseMoney(children[4]),
-		total: parseMoney(children[5])
+		date: parseDate(date),
+		id: parseInt(id),
+		location,
+		plan,
+		amount: parseMoney(amount),
+		total: parseMoney(total)
 	}
 }
 
@@ -62,3 +64,5 @@ for (const row of rows) {
 }
 
 storeTransactions(foundData)
+
+console.debug("[Reed Board Tracker] Found Data:", foundData)

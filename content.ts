@@ -5,7 +5,7 @@ import { storeTransactions, type Transaction } from "~transaction"
 console.info("[Reed Board Tracker] Injected!")
 
 export const config: PlasmoCSConfig = {
-	matches: ["https://iris.reed.edu/board_commuter/*"]
+	matches: ["https://iris.reed.edu/board_commuter*"]
 }
 
 const rows = [...document.querySelector("table#transactions tbody").children]
@@ -65,4 +65,4 @@ for (const row of rows) {
 
 storeTransactions(foundData)
 
-console.debug("[Reed Board Tracker] Found Data:", foundData)
+console.info("[Reed Board Tracker] Found Data:", foundData)

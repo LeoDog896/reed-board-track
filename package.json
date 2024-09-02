@@ -7,10 +7,10 @@
 	"scripts": {
 		"dev": "plasmo dev",
 		"dev:chrome": "plasmo dev --target=chrome-mv3",
-		"dev:firefox": "plasmo dev --target=firefox-mv3",
+		"dev:firefox": "plasmo dev --target=firefox-mv2",
 		"build": "plasmo build",
 		"build:chrome": "plasmo build --target=chrome-mv3",
-		"build:firefox": "plasmo build --target=firefox-mv3",
+		"build:firefox": "plasmo build --target=firefox-mv2",
 		"package": "plasmo package",
 		"format": "prettier --write ."
 	},
@@ -58,9 +58,7 @@
 				]
 			}
 		],
-		"content_security_policy": {
-			"extension_pages": "default-src 'self'"
-		},
+		"content_security_policy": "default-src '*'",
 		"browser_specific_settings": {
 			"gecko": {
 				"id": "reed-board-track@leodog896.com"

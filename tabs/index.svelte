@@ -158,7 +158,7 @@
 	<div class="back">
 		<a href="https://github.com/LeoDog896/reed-board-track"
 			>{@html GithubSVG}</a>
-		<a href="https://addons.mozilla.org/en-US/firefox/">{@html FirefoxSVG}</a>
+		<a href="https://addons.mozilla.org/en-US/firefox/addon/reed-board-tracker/">{@html FirefoxSVG}</a>
 		<a href="https://chromewebstore.google.com/">{@html ChromeSVG}</a>
 	</div>
 </header>

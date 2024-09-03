@@ -159,7 +159,7 @@
 		<a href="https://github.com/LeoDog896/reed-board-track"
 			>{@html GithubSVG}</a>
 		<a href="https://addons.mozilla.org/en-US/firefox/addon/reed-board-tracker/">{@html FirefoxSVG}</a>
-		<a href="https://chromewebstore.google.com/">{@html ChromeSVG}</a>
+		<a href="https://chromewebstore.google.com/detail/reed-board-tracker/elpbdjofckokonheccdadlpmjjdhohof ">{@html ChromeSVG}</a>
 	</div>
 </header>
 

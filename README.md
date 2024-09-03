@@ -1,5 +1,8 @@
 # reed-board-track
 
+[![Get on Chrome Badge](https://img.shields.io/badge/get_on-chrome-green?style=for-the-badge&logo=googlechrome&logoColor=green)](https://chromewebstore.google.com/detail/reed-board-tracker/elpbdjofckokonheccdadlpmjjdhohof) [![Get on Firefox Badge](https://img.shields.io/badge/get_on-firefox-orange?style=for-the-badge&logo=firefox&logoColor=orange)](https://addons.mozilla.org/en-GB/firefox/addon/reed-board-tracker/)
+
+
 track your board points through a little graph and estimate other board plans!
 
 This is a [Plasmo extension](https://docs.plasmo.com/) project bootstrapped with [`plasmo init`](https://www.npmjs.com/package/plasmo).

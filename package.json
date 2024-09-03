@@ -1,7 +1,7 @@
 {
 	"name": "reed-board-track",
 	"displayName": "Reed Board Tracker",
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"description": "Track your board points over time.",
 	"author": "Tristan F. <leodog896@gmail.com>",
 	"scripts": {

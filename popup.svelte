@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onMount } from "svelte"
 
-	import '@fontsource-variable/dm-sans'
+	import "@fontsource-variable/dm-sans"
 	import "./style.css"
 
 	import {

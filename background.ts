@@ -20,11 +20,11 @@ chrome.declarativeNetRequest.updateDynamicRules({
 })
 
 const manifest = chrome.runtime.getManifest()
-const permissions = { "origins": manifest.host_permissions }
-chrome.permissions.contains(permissions).then(async result => {
+const permissions = { origins: manifest.host_permissions }
+chrome.permissions.contains(permissions).then(async (result) => {
 	if (!result) {
 		await chrome.permissions.request(permissions)
 	}
-});
+})
 
 export {}

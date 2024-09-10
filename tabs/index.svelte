@@ -2,7 +2,7 @@
 	import dayjs, { type OpUnitType } from "dayjs"
 	import { onMount } from "svelte"
 
-	import '@fontsource-variable/dm-sans'
+	import "@fontsource-variable/dm-sans"
 	import "../style.css"
 
 	import ChromeSVG from "bundle-text:../assets/chrome.svg"
@@ -11,6 +11,7 @@
 	import download from "downloadjs"
 
 	import TimeChart from "~components/TimeChart.svelte"
+	import { storage } from "~storage"
 	import {
 		getTransactions,
 		watchTransactions,
@@ -19,6 +20,7 @@
 	} from "~transaction"
 
 	import ReedLogo from "../assets/reed-college-griffin-white.png"
+	import { storageStore } from "./storageStore"
 
 	let transactions: TransactionRecord = {}
 	watchTransactions((newTransactions) => {
@@ -39,6 +41,7 @@
 	let unmappedTransactions: Transaction[] = []
 	$: unmappedTransactions = Object.values(transactions)
 
+	// where sorted means newest first
 	let sortedTransactions: Transaction[] = []
 	$: sortedTransactions = unmappedTransactions.sort(
 		(b, a) => a.date.getTime() - b.date.getTime()
@@ -79,6 +82,9 @@
 		return total / chunkCount
 	}
 
+	$: predictedMoneyToBeSpent =
+		averageTimeTransaction(meaningfulTransactionsMinusToday) * dayCount
+
 	function chunkedTransactions(
 		transactions: Transaction[],
 		unit: OpUnitType = "day"
@@ -116,7 +122,15 @@
 		dayjs().set("hour", 0).set("minute", 0).set("second", 0).toDate()
 	)
 
-	let dayCount = 120
+	let endDay = storageStore(
+		storage,
+		"end-board-date",
+		dayjs().add(4, "month").format("YYYY-MM-DD")
+	)
+	$: dayCount = dayjs($endDay, "YYYY-MM-DD").diff(dayjs(), "days")
+
+	$: finalAmount =
+		sortedTransactions.length !== 0 ? sortedTransactions[0].total : undefined
 
 	let displayType = "total-chart"
 
@@ -158,8 +172,11 @@
 	<div class="back">
 		<a href="https://github.com/LeoDog896/reed-board-track"
 			>{@html GithubSVG}</a>
-		<a href="https://addons.mozilla.org/en-US/firefox/addon/reed-board-tracker/">{@html FirefoxSVG}</a>
-		<a href="https://chromewebstore.google.com/detail/reed-board-tracker/elpbdjofckokonheccdadlpmjjdhohof ">{@html ChromeSVG}</a>
+		<a href="https://addons.mozilla.org/en-US/firefox/addon/reed-board-tracker/"
+			>{@html FirefoxSVG}</a>
+		<a
+			href="https://chromewebstore.google.com/detail/reed-board-tracker/elpbdjofckokonheccdadlpmjjdhohof "
+			>{@html ChromeSVG}</a>
 	</div>
 </header>
 
@@ -183,20 +200,23 @@
 				{formatMoney(averageTimeTransaction(meaningfulTransactionsMinusToday))}
 			</li>
 			<li>
-				Predicted <input
-					type="number"
-					placeholder="days"
-					bind:value={dayCount} />
+				Predicted spent money until <input
+					type="date"
+					placeholder="Academic end date"
+					bind:value={$endDay} />
 				day spending:
-				{formatMoney(
-					averageTimeTransaction(meaningfulTransactionsMinusToday) * dayCount
-				)}
+				{formatMoney(predictedMoneyToBeSpent)}
 				(<a href="https://www.reed.edu/academic-calendar/"
 					>See Academic Calendar</a
 				>) (<a
 					href="https://www.reed.edu/campus-life/housing-dining/dining-food-services/meal-plan.html"
 					>See Meal Plan Cost</a
 				>)
+			</li>
+			<li>
+				Extra predicted funds: {formatMoney(finalAmount / dayCount)}/day, {formatMoney(
+					finalAmount - -predictedMoneyToBeSpent
+				)} extra
 			</li>
 		{/if}
 	</ul>

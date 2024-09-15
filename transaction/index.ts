@@ -1,4 +1,5 @@
 import equal from "deep-equal"
+import { compress, decompress } from "lz-string"
 import { z } from "zod"
 
 import { storage } from "~storage"
@@ -23,16 +24,36 @@ export type TransactionRecord = z.infer<typeof transactionRecordSchema>
 
 export const transactionKey = "point-transactions"
 
-export async function getTransactions(): Promise<TransactionRecord> {
-	const result = transactionRecordSchema.safeParse(
-		await storage.get(transactionKey)
-	)
+// no transaction version key is direct JSON
+// "2" is lz-string compressed JSON
+export const transactionStorageVersionKey = "point-transactions-version"
+export const transactionStorageVersionValue = "2"
+
+function parseJSON(data: unknown) {
+	const result = transactionRecordSchema.safeParse(data)
 
 	if (result.success) {
 		return result.data
 	} else {
 		console.warn(result.error)
 		return {}
+	}
+}
+
+export async function getTransactions(): Promise<TransactionRecord> {
+	const storageVersion = await storage.get(transactionStorageVersionKey)
+	const storageData = await storage.get(transactionKey)
+
+	if (storageData === undefined) {
+		return {}
+	}
+
+	if (storageVersion === "2") {
+		return parseJSON(JSON.parse(decompress(await storage.get(transactionKey))))
+	} else {
+		const data = parseJSON(await storage.get(transactionKey))
+		await storeTransactions(Object.values(data))
+		return parseJSON(data)
 	}
 }
 
@@ -77,7 +98,15 @@ export async function storeTransactions(
 		currentTransactions[transaction.id] = transaction
 	}
 
-	await storage.set(transactionKey, currentTransactions)
+	await storage.set(
+		transactionStorageVersionKey,
+		transactionStorageVersionValue
+	)
+	await storage.set(
+		transactionKey,
+		compress(JSON.stringify(currentTransactions))
+	)
+	console.log(compress(JSON.stringify(currentTransactions)))
 
 	return updatedTransactions
 }
